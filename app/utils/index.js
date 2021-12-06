@@ -72,6 +72,12 @@ export default class Utils {
     const date = new Date()
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
   }
+  
+  static returnRejection(message, responseCode) {
+    const msg = message ? message : Constants.INTERNAL_SERVER_ERROR;
+    const code = responseCode ? responseCode : Constants.RESPONSE_CODE.INTERNAL_SERVER_ERROR;
+    return Promise.reject({message: msg, code: code});
+}
 
   /**
    * @param functionName
@@ -82,6 +88,7 @@ export default class Utils {
    * @constructor
    */
   static lhtLog (functionName, message, payload, developerAlias, logType = 'INFO') {
-    console.log(`[ ${this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(payload)}: Developer : ${developerAlias}`)
+    console.log(`[ {this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(payload)}: Developer : ${developerAlias}`)
+    // console.log(`[ ${this.getFormattedDate()} ] ${logType}: ${functionName}: ${message}: ${JSON.stringify(payload)}: Developer : ${developerAlias}`)
   }
 }
