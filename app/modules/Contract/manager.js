@@ -9,8 +9,8 @@ export default class Manger {
     addContract = async ({ contractAddress }) => {
         if (!contractAddress)
             return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-        const response = await ContractModel.getAccountList({ address: contractAddress })
-        if (response[0].address && response[0].address === contractAddress)
+        const response = await ContractModel.find({ address: contractAddress })
+        if (response[0] && response[0].address && response[0].address === contractAddress)
             return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
         const token = new web3.eth.Contract(ERC20ABI, contractAddress);
         const call = await web3.eth.call({ to: contractAddress, data: web3.utils.sha3("totalSupply()") });
