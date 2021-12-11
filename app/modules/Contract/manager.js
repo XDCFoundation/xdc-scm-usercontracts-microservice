@@ -12,9 +12,14 @@ export default class Manger {
         const response = await ContractModel.find({ address: contractAddress })
         if (response[0] && response[0].address && response[0].address === contractAddress)
             return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        const contractDB = await this.getContractByToken(contractAddress)
+        const contractObject = new ContractModel(contractDB)
+        return await contractObject.save();
+    }
+
+    getContractByToken = async (contractAddress) => {
         const token = new web3.eth.Contract(ERC20ABI, contractAddress);
         const call = await web3.eth.call({ to: contractAddress, data: web3.utils.sha3("totalSupply()") });
-        console.log("Call IS", call)
         let isTokenContract = true
         const contractDB = {
             address: contractAddress,
@@ -39,8 +44,8 @@ export default class Manger {
             }
         }
         contractDB.byteCode = await web3.eth.getCode(contractAddress);
-        const contractObject = new ContractModel(contractDB)
-        return await contractObject.save();
+        return contractDB
+
     }
 
     getContractById = async ({ id }) => {
@@ -49,9 +54,46 @@ export default class Manger {
         const response = await ContractModel.getAccountList({ _id: id });
         if (response[0].address)
             return response;
+        if (response[0].isHidden && response[0].isHidden === false) {
+            response
+        }
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
 
     }
+
+    hideContract = async ({ id }) => {
+        if (!id)
+            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        let responseGet = await ContractModel.getAccount({ _id: id });
+        if (responseGet && responseGet.isHidden === false) {
+            const responseUpdate = await ContractModel.updateAccount({ _id: id },  { isHidden: true });
+            if (responseUpdate.isHidden === true)
+                return responseUpdate;
+            else
+                return Utils.returnRejection("Update Failed", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        }
+        if (responseGet && responseGet.isHidden === true)
+            return Utils.returnRejection("Already hidden", httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+    }
+
+    showContract = async ({ id }) => {
+        if (!id)
+            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        let responseGet = await ContractModel.getAccount({ _id: id });
+        if (responseGet && responseGet.isHidden === true) {
+            const responseUpdate = await ContractModel.updateAccount({ _id: id }, { isHidden: false });
+            if (responseUpdate.isHidden === false)
+                return responseUpdate;
+            else
+                return Utils.returnRejection("Update Failed", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        }
+        if (responseGet && responseGet.isHidden === false)
+            return Utils.returnRejection("Already not hidden", httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+    }
+
+
     getContractsList = async (requestData) => {
         if (!requestData) requestData = {}
         const contractListRequest = this.parseGetContractListRequest(requestData);

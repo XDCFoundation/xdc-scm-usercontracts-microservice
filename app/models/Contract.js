@@ -17,6 +17,7 @@ const ContractSchema = new Schema({
     byteCode: { type: String, default: "" },
     createdOn: { type: Number, default: Date.now() },
     modifiedOn: { type: Number, default: Date.now() },
+    isHidden : { type: Boolean, default: false }, 
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
 });
@@ -34,9 +35,11 @@ ContractSchema.static({
 
     updateAccount: function (findObj, updateObj) {
         return this.findOneAndUpdate(findObj, updateObj, {
-            returnNewDocument: true,
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true,
         });
-    },
+      },
     countData: function (findObj) {
         return this.count(findObj);
       },
