@@ -16,4 +16,5 @@ module.exports = (app) => {
     app.post("/contract-list", new ContractModule().getContractsList);
     app.post("/hide-contract", new ContractModule().hideContract);
     app.post("/show-contract", new ContractModule().showContract);
+    app.delete("/contract", new ContractModule().removeContract);
 };

@@ -93,6 +93,15 @@ export default class Manger {
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
+    removeContract = async ({ id }) => {
+        if (!id)
+            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        const response = await ContractModel.removeData({_id: id})
+        if(response.deletedCount===1)
+            return "Remove Success"
+        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+    }
+
 
     getContractsList = async (requestData) => {
         if (!requestData) requestData = {}
