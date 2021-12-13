@@ -51,12 +51,9 @@ export default class Manger {
     getContractById = async ({ id }) => {
         if (!id)
             return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        const response = await ContractModel.getAccountList({ _id: id });
-        if (response[0].address)
+        const response = await ContractModel.getAccount({ _id: id });
+        if (response.address)
             return response;
-        if (response[0].isHidden && response[0].isHidden === false) {
-            response
-        }
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
 
     }
