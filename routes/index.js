@@ -12,9 +12,13 @@ module.exports = (app) => {
      * route definition
      */
     app.post("/contract", new ContractModule().addContract);
-    app.get("/contract", new ContractModule().getContractById);
+    app.get("/contract",ValidationManger.checkForId, new ContractModule().getContractById);
     app.post("/contract-list", new ContractModule().getContractsList);
-    app.post("/hide-contract", new ContractModule().hideContract);
-    app.post("/show-contract", new ContractModule().showContract);
-    app.delete("/contract", new ContractModule().removeContract);
+    app.post("/hide-contract", ValidationManger.checkForId, new ContractModule().hideContract);
+    app.post("/show-contract",ValidationManger.checkForId,  new ContractModule().showContract);
+    app.delete("/contract",ValidationManger.checkForId, new ContractModule().removeContract);
+    app.put("/contract-name",ValidationManger.renameContract , new ContractModule().renameContract);
+    app.get("/tags", new ContractModule().getListOfTags);
+    app.post("/tags",ValidationManger.addTagToContract,  new ContractModule().addTagToContract);
+    app.delete("/tags", new ContractModule().removeTagFromContract);
 };
