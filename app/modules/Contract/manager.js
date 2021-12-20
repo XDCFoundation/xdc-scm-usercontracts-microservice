@@ -17,6 +17,37 @@ export default class Manger {
         return await contractObject.save();
     }
 
+    addTagToContract = async ({ contractId, tags }) => {
+        let contract = await ContractModel.findOne({ _id: contractId });
+        let contractTags = [];
+        if (contract.tags && contract.tags.length && contract.tags.length > 0)
+            contractTags = contract.tags;
+        tags.forEach((tag) => {
+            if (!contractTags.includes(tag))
+                contractTags.push(tag);
+        })
+        const responseUpdate = await ContractModel.updateAccount({ _id: contractId }, { tags: contractTags });
+        return responseUpdate;
+    }
+
+    removeTagFromContract = async ({ contractId, tags }) => {
+        if (!tags || !tags.length || !contractId)
+            return Utils.returnRejection("contractId and Tags are required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        let contract = await ContractModel.findOne({ _id: contractId });
+        let contractTags = [];
+        if (contract.tags && contract.tags.length && contract.tags.length > 0)
+            contractTags = contract.tags;
+        tags.forEach((tag) => {
+            contractTags = contractTags.filter(e => e !== tag);
+        })
+        const responseUpdate = await ContractModel.updateAccount({ _id: contractId }, { tags: contractTags });
+        return responseUpdate;
+    }
+
+    getListOfTags = async () => {
+        return await ContractModel.distinct("tags");
+    }
+
     getContractByToken = async (contractAddress) => {
         const token = new web3.eth.Contract(ERC20ABI, contractAddress);
         const call = await web3.eth.call({ to: contractAddress, data: web3.utils.sha3("totalSupply()") });
@@ -49,21 +80,24 @@ export default class Manger {
     }
 
     getContractById = async ({ id }) => {
-        if (!id)
-            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
         const response = await ContractModel.getAccount({ _id: id });
         if (response.address)
             return response;
-        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        return Utils.returnRejection(apiFailureMessage.INVALID_ID , httpConstants.RESPONSE_CODES.NOT_FOUND);
+    }
 
+    renameContract = async ({ id, contractName }) => {
+        let response = await ContractModel.findOne({ _id: id });
+        if (!response)
+            return Utils.returnRejection(apiFailureMessage.INVALID_ID, httpConstants.RESPONSE_CODES.BAD_REQUEST);
+        const responseUpdate = await ContractModel.updateAccount({ _id: id }, { contractName: contractName });
+        return responseUpdate;
     }
 
     hideContract = async ({ id }) => {
-        if (!id)
-            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
         let responseGet = await ContractModel.getAccount({ _id: id });
         if (responseGet && responseGet.isHidden === false) {
-            const responseUpdate = await ContractModel.updateAccount({ _id: id },  { isHidden: true });
+            const responseUpdate = await ContractModel.updateAccount({ _id: id }, { isHidden: true });
             if (responseUpdate.isHidden === true)
                 return responseUpdate;
             else
@@ -71,12 +105,10 @@ export default class Manger {
         }
         if (responseGet && responseGet.isHidden === true)
             return Utils.returnRejection("Already hidden", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        return Utils.returnRejection(apiFailureMessage.INVALID_ID, httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
     showContract = async ({ id }) => {
-        if (!id)
-            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
         let responseGet = await ContractModel.getAccount({ _id: id });
         if (responseGet && responseGet.isHidden === true) {
             const responseUpdate = await ContractModel.updateAccount({ _id: id }, { isHidden: false });
@@ -87,16 +119,14 @@ export default class Manger {
         }
         if (responseGet && responseGet.isHidden === false)
             return Utils.returnRejection("Already not hidden", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        return Utils.returnRejection(apiFailureMessage.INVALID_ID, httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
     removeContract = async ({ id }) => {
-        if (!id)
-            return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        const response = await ContractModel.removeData({_id: id})
-        if(response.deletedCount===1)
+        const response = await ContractModel.removeData({ _id: id })
+        if (response.deletedCount === 1)
             return "Remove Success"
-        return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
+        return Utils.returnRejection(apiFailureMessage.INVALID_ID, httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
 

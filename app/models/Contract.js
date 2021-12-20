@@ -17,6 +17,7 @@ const ContractSchema = new Schema({
     byteCode: { type: String, default: "" },
     createdOn: { type: Number, default: Date.now() },
     modifiedOn: { type: Number, default: Date.now() },
+    tags : {type: Array, default : []},
     isHidden: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },

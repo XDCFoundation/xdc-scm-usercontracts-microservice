@@ -18,6 +18,7 @@ export default class Index {
   }
 
   async getContractsList (request, response) {
+    console.log("THIS IS Entry Point Index FUNCTION")
     lhtWebLog('Inside getContractsList', request.body, 'getContractsList', 0, '')
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getContractsList(request.body))
     if (!getMetersRes) { return Utils.handleError(error, request, response) }
@@ -40,6 +41,30 @@ export default class Index {
   async removeContract (request, response) {
     lhtWebLog('Inside removeContract', request.body, 'removeContract', 0, '')
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().removeContract(request.body))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+  async addTagToContract (request, response) {
+    lhtWebLog('Inside addTagToContract', request.body, 'addTagToContract', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().addTagToContract(request.body))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+  async removeTagFromContract (request, response) {
+    lhtWebLog('Inside removeTagFromContract', request.body, 'removeTagFromContract', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().removeTagFromContract(request.body))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+  async getListOfTags (request, response) {
+    lhtWebLog('Inside getListOfTags', request.body, 'getListOfTags', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getListOfTags(request.body))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+  async renameContract (request, response) {
+    lhtWebLog('Inside renameContract', request.body, 'renameContract', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().renameContract(request.body))
     if (!getMetersRes) { return Utils.handleError(error, request, response) }
     return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
   }

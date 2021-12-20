@@ -2,13 +2,26 @@ import Utils from '../app/utils'
 import * as yup from 'yup'
 
 module.exports = {
-  // testValidator: async (req, res, next) => {
-  //   const schema = yup.object().shape({
-  //     // email: yup.string().email(),
-  //     // password: yup.string().min(8).required()
-  //   })
-  //   await validate(schema, req.body, res, next)
-  // }
+  renameContract: async (req, res, next) => {
+    const schema = yup.object().shape({
+      id: yup.string().required(),
+      contractName: yup.string().required()
+    })
+    await validate(schema, req.body, res, next)
+  },
+  checkForId: async (req, res, next) => {
+    const schema = yup.object().shape({
+      id: yup.string().required(),
+    })
+    await validate(schema, req.body, res, next)
+  },
+  addTagToContract: async (req, res, next) => {
+    const schema = yup.object().shape({
+      tags: yup.array().required(),
+      contractId : yup.string().required()
+    })
+    await validate(schema, req.body, res, next)
+  },
 }
 
 const validate = async (schema, reqData, res, next) => {
