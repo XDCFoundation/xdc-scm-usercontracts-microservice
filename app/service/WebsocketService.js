@@ -1,15 +1,16 @@
+import {httpConstants} from "../common/constants";
+import Config from "../../config";
 import Web3 from "xdc3";
 
 export default class WebSocketService {
-    static webSocketConnection(url) {
+    static connect() {
+        lhtWebLog('webSocketConnection', 'connecting to ', Config.WS_URL)
         try {
-            console.log(url)
-            return new Web3(new Web3.providers.WebsocketProvider(url));
+            global.web3 = new Web3(new Web3.providers.WebsocketProvider(Config.WS_URL));
+            return true;
         } catch (err) {
-            console.log("webSocketConnection err", err);
-            global.web3 = new Web3((url));
+            lhtWebLog('webSocketConnection', 'error in connection ', err, 'AyushK', httpConstants.LOG_LEVEL_TYPE.ERROR)
+            throw err
         }
     }
 }
-
-// module.exports = WebSocketService;

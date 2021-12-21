@@ -1,15 +1,15 @@
 import ContractModel from "../../models/Contract"
 import Utils from '../../utils'
-import { httpConstants, apiFailureMessage, apiSuccessMessage } from "../../common/constants";
+import {httpConstants} from "../../common/constants";
 
 
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 
 export default class Manger {
-    addContract = async ({ contractAddress }) => {
+    addContract = async ({contractAddress}) => {
         if (!contractAddress)
             return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-        const response = await ContractModel.find({ address: contractAddress })
+        const response = await ContractModel.find({address: contractAddress})
         if (response[0] && response[0].address && response[0].address === contractAddress)
             return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
         const contractDB = await this.getContractByToken(contractAddress)
@@ -18,8 +18,8 @@ export default class Manger {
     }
 
     getContractByToken = async (contractAddress) => {
-        const token = new web3.eth.Contract(ERC20ABI, contractAddress);
-        const call = await web3.eth.call({ to: contractAddress, data: web3.utils.sha3("totalSupply()") });
+        const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
+        const call = await web3.eth.call({to: contractAddress, data: web3.utils.sha3("totalSupply()")});
         let isTokenContract = true
         const contractDB = {
             address: contractAddress,
@@ -31,13 +31,12 @@ export default class Manger {
         if (call === "0x") {
             isTokenContract = false;
             contractDB.ERC = 0;
-        }
-        else {
+        } else {
             try {
-                contractDB.tokenName = await token.methods.name().call();
-                contractDB.symbol = await token.methods.symbol().call();
-                contractDB.decimals = await token.methods.decimals().call();
-                contractDB.totalSupply = await token.methods.totalSupply().call();
+                contractDB.tokenName = await contract.methods.name().call();
+                contractDB.symbol = await contract.methods.symbol().call();
+                contractDB.decimals = await contract.methods.decimals().call();
+                contractDB.totalSupply = await contract.methods.totalSupply().call();
                 contractDB.ERC = 2;
             } catch (error) {
                 return Utils.returnRejection(error, httpConstants.RESPONSE_CODES.SERVER_ERROR)
@@ -48,22 +47,22 @@ export default class Manger {
 
     }
 
-    getContractById = async ({ id }) => {
+    getContractById = async ({id}) => {
         if (!id)
             return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        const response = await ContractModel.getAccount({ _id: id });
+        const response = await ContractModel.getAccount({_id: id});
         if (response.address)
             return response;
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
 
     }
 
-    hideContract = async ({ id }) => {
+    hideContract = async ({id}) => {
         if (!id)
             return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        let responseGet = await ContractModel.getAccount({ _id: id });
+        let responseGet = await ContractModel.getAccount({_id: id});
         if (responseGet && responseGet.isHidden === false) {
-            const responseUpdate = await ContractModel.updateAccount({ _id: id },  { isHidden: true });
+            const responseUpdate = await ContractModel.updateAccount({_id: id}, {isHidden: true});
             if (responseUpdate.isHidden === true)
                 return responseUpdate;
             else
@@ -74,12 +73,12 @@ export default class Manger {
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
-    showContract = async ({ id }) => {
+    showContract = async ({id}) => {
         if (!id)
             return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
-        let responseGet = await ContractModel.getAccount({ _id: id });
+        let responseGet = await ContractModel.getAccount({_id: id});
         if (responseGet && responseGet.isHidden === true) {
-            const responseUpdate = await ContractModel.updateAccount({ _id: id }, { isHidden: false });
+            const responseUpdate = await ContractModel.updateAccount({_id: id}, {isHidden: false});
             if (responseUpdate.isHidden === false)
                 return responseUpdate;
             else
@@ -90,11 +89,11 @@ export default class Manger {
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
 
-    removeContract = async ({ id }) => {
+    removeContract = async ({id}) => {
         if (!id)
             return Utils.returnRejection("id is required", httpConstants.RESPONSE_CODES.BAD_REQUEST);
         const response = await ContractModel.removeData({_id: id})
-        if(response.deletedCount===1)
+        if (response.deletedCount === 1)
             return "Remove Success"
         return Utils.returnRejection("Invalid Id", httpConstants.RESPONSE_CODES.NOT_FOUND);
     }
@@ -105,7 +104,7 @@ export default class Manger {
         const contractListRequest = this.parseGetContractListRequest(requestData);
         const contractList = await ContractModel.getAccountList(contractListRequest.requestData, contractListRequest.selectionKeys, contractListRequest.skip, contractListRequest.limit, contractListRequest.sortingKey);
         let totalCount = await ContractModel.countData()
-        return { contractList, totalCount };
+        return {contractList, totalCount};
     };
 
     parseGetContractListRequest = (requestObj) => {
@@ -133,8 +132,8 @@ export default class Manger {
         let searchQuery = [];
         if (requestObj.searchKeys && requestObj.searchValue && Array.isArray(requestObj.searchKeys) && requestObj.searchKeys.length) {
             requestObj.searchKeys.map((searchKey) => {
-                let searchRegex = { "$regex": requestObj.searchValue, "$options": "i" };
-                searchQuery.push({ [searchKey]: searchRegex });
+                let searchRegex = {"$regex": requestObj.searchValue, "$options": "i"};
+                searchQuery.push({[searchKey]: searchRegex});
             });
             requestObj["$or"] = searchQuery;
         }
