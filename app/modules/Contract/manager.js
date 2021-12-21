@@ -1,15 +1,15 @@
 import ContractModel from "../../models/Contract"
 import Utils from '../../utils'
-import { httpConstants, apiFailureMessage, apiSuccessMessage } from "../../common/constants";
+import {httpConstants} from "../../common/constants";
 
 
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 
 export default class Manger {
-    addContract = async ({ contractAddress }) => {
+    addContract = async ({contractAddress}) => {
         if (!contractAddress)
             return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-        const response = await ContractModel.find({ address: contractAddress })
+        const response = await ContractModel.find({address: contractAddress})
         if (response[0] && response[0].address && response[0].address === contractAddress)
             return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
         const contractDB = await this.getContractByToken(contractAddress)
@@ -49,8 +49,8 @@ export default class Manger {
     }
 
     getContractByToken = async (contractAddress) => {
-        const token = new web3.eth.Contract(ERC20ABI, contractAddress);
-        const call = await web3.eth.call({ to: contractAddress, data: web3.utils.sha3("totalSupply()") });
+        const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
+        const call = await web3.eth.call({to: contractAddress, data: web3.utils.sha3("totalSupply()")});
         let isTokenContract = true
         const contractDB = {
             address: contractAddress,
@@ -62,13 +62,12 @@ export default class Manger {
         if (call === "0x") {
             isTokenContract = false;
             contractDB.ERC = 0;
-        }
-        else {
+        } else {
             try {
-                contractDB.tokenName = await token.methods.name().call();
-                contractDB.symbol = await token.methods.symbol().call();
-                contractDB.decimals = await token.methods.decimals().call();
-                contractDB.totalSupply = await token.methods.totalSupply().call();
+                contractDB.tokenName = await contract.methods.name().call();
+                contractDB.symbol = await contract.methods.symbol().call();
+                contractDB.decimals = await contract.methods.decimals().call();
+                contractDB.totalSupply = await contract.methods.totalSupply().call();
                 contractDB.ERC = 2;
             } catch (error) {
                 return Utils.returnRejection(error, httpConstants.RESPONSE_CODES.SERVER_ERROR)
