@@ -5,7 +5,7 @@ const fs = require("fs");
 
 export default class DBConnection {
     static async connect() {
-        lhtWebLog('connect', `DB trying to connect to url ${Config.DB}`)
+        lhtWebLog('connect', `DB trying to connect to url `, Config.DB, 'AyushK')
         const caContent = [fs.readFileSync(__dirname + "/" + Config.RDS_FILE),];
 
         const options = {

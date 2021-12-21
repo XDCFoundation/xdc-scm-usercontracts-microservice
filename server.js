@@ -16,11 +16,11 @@ class Server {
         app.listen(Config.PORT)
         routes(app)
         require('./config/jobInitializer')
+        lhtWebLog('listen', `Server Started on port ${Config.PORT}`, {}, 'AyushK', httpConstants.LOG_LEVEL_TYPE.INFO)
     }
 
     static listen() {
-        Promise.all([DBConnection.connect(), WebSocketService.connect(Config.WS_URL)]).then(async () => {
-            lhtWebLog('listen', `Server Started on port ${Config.PORT}`, {}, 'AyushK', httpConstants.LOG_LEVEL_TYPE.INFO)
+        Promise.all([DBConnection.connect(), WebSocketService.connect()]).then(async () => {
             Server.startNodeApp()
         }).catch(error => lhtWebLog('listen', 'failed to connect', {error}, 'AyushK', httpConstants.LOG_LEVEL_TYPE.ERROR))
     }
