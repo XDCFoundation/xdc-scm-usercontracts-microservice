@@ -4,7 +4,7 @@ import Web3 from "xdc3";
 
 export default class WebSocketService {
     static connect() {
-        lhtWebLog('webSocketConnection', 'connecting to ', Config.WS_URL)
+        lhtWebLog('webSocketConnection', 'connecting to ', Config.WS_URL,'AyushK')
         try {
             global.web3 = new Web3(new Web3.providers.WebsocketProvider(Config.WS_URL));
             return true;
