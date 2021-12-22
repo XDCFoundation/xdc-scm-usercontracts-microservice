@@ -7,22 +7,19 @@ let ERC20ABI = require("./jsonInterface").ERC20ABI;
 
 export default class Manger {
     addContract = async ({contractAddress}) => {
-        if (!contractAddress)
-            return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-        const response = await ContractModel.find({address: contractAddress})
-        if (response[0] && response[0].address && response[0].address === contractAddress)
-            return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-        const contractDB = await this.getContractByToken(contractAddress)
-        return this.saveContractToDB(contractDB);
-    }
-
-    saveContractToDB = async (contractDB) => {
+        console.log(contractAddress)
+        const contractDB = await this.checkAddress({contractAddress})
         const contractObject = new ContractModel(contractDB)
         return await contractObject.save();
     }
 
     checkAddress = async ({contractAddress}) => {
-        return this.addContract({contractAddress})
+        if (!contractAddress)
+            return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        const response = await ContractModel.find({address: contractAddress})
+        if (response[0] && response[0].address && response[0].address === contractAddress)
+            return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        return await this.getContractByToken(contractAddress)
     }
 
     addTagToContract = async ({ contractId, tags }) => {
