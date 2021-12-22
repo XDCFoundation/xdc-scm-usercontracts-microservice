@@ -22,7 +22,7 @@ export default class Manger {
     }
 
     checkAddress = async ({contractAddress}) => {
-        this.addContract({contractAddress})
+        return this.addContract({contractAddress})
     }
 
     addTagToContract = async ({ contractId, tags }) => {
