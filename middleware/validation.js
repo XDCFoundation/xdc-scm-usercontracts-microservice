@@ -15,6 +15,12 @@ module.exports = {
     })
     await validate(schema, req.body, res, next)
   },
+  checkForIdQuery: async (req, res, next) => {
+    const schema = yup.object().shape({
+      id: yup.string().required(),
+    })
+    await validate(schema, req.query, res, next)
+  },
   addTagToContract: async (req, res, next) => {
     const schema = yup.object().shape({
       tags: yup.array().required(),
