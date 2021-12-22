@@ -21,4 +21,5 @@ module.exports = (app) => {
     app.get("/tags", new ContractModule().getListOfTags);
     app.post("/tags",ValidationManger.addTagToContract,  new ContractModule().addTagToContract);
     app.delete("/tags", new ContractModule().removeTagFromContract);
+    app.get("/check-address", new ContractModule().checkAddress);
 };

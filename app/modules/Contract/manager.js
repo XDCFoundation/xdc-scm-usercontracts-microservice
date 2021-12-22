@@ -17,6 +17,16 @@ export default class Manger {
         return await contractObject.save();
     }
 
+    checkAddress = async ({contractAddress}) => {
+        if (!contractAddress)
+            return Utils.returnRejection("contract address is required", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        const response = await ContractModel.find({address: contractAddress})
+        if (response[0] && response[0].address && response[0].address === contractAddress)
+            return Utils.returnRejection("Address already Exists", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+        const contractDB = await this.getContractByToken(contractAddress)
+        return contractDB;
+    }
+
     addTagToContract = async ({ contractId, tags }) => {
         let contract = await ContractModel.findOne({ _id: contractId });
         let contractTags = [];
