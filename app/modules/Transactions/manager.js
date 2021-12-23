@@ -1,4 +1,4 @@
-import ContractModel from "../../models/Contract"
+import ContractModel from "../../models/contract"
 import Utils from '../../utils'
 import { httpConstants, apiFailureMessage, apiSuccessMessage } from "../../common/constants";
 
