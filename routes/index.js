@@ -2,7 +2,8 @@
  * Created by AyushK on 18/09/20.
  */
 import * as ValidationManger from "../middleware/validation";
-import ContractModule from "../app/modules/Contract";
+import ContractModule from "../app/modules/contract";
+import UserModule from "../app/modules/user";
 import {stringConstants} from "../app/common/constants";
 
 module.exports = (app) => {
@@ -22,4 +23,8 @@ module.exports = (app) => {
     app.post("/tags",ValidationManger.addTagToContract,  new ContractModule().addTagToContract);
     app.delete("/tags", new ContractModule().removeTagFromContract);
     app.get("/check-address", new ContractModule().checkAddress);
+
+    // User Routes
+    app.get("/user", new UserModule().getUserDetails);
+    app.post("/user", new UserModule().addUser);
 };
