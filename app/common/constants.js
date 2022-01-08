@@ -82,6 +82,7 @@ export const apiFailureMessage = {
   DEVICE_ID_OR_SESSION_TOKEN_EMPTY: 'Device id or session token can\'t be empty or null',
   SESSION_GENERATION: 'Unable to generate session!',
   SESSION_EXPIRED: 'Session Expired!',
-  INVALID_ID: "Invalid Id"
+  INVALID_ID: "Invalid Id",
+  USER_ID_MISSING: "user id is required"
 
 }

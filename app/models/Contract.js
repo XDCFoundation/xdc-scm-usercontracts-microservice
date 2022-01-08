@@ -2,6 +2,7 @@ let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
 
 const ContractSchema = new Schema({
+    userId : { type: Schema.Types.ObjectId , required: true },
     address: { type: String, default: "" },
     blockNumber: { type: Number, default: 0 },
     status: { type: String, default: "Unverified" },
