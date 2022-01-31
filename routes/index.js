@@ -5,6 +5,7 @@ import * as ValidationManger from "../middleware/validation";
 import ContractModule from "../app/modules/contract";
 import UserModule from "../app/modules/user";
 import {stringConstants} from "../app/common/constants";
+import NetworkModule from "../app/modules/network/index";
 
 module.exports = (app) => {
     app.get('/', (req, res) => res.send(stringConstants.SERVICE_STATUS_HTML));
@@ -27,4 +28,6 @@ module.exports = (app) => {
     // User Routes
     app.get("/user", new UserModule().getUserDetails);
     app.post("/user", new UserModule().addUser);
+    app.post("/add-network", new NetworkModule().addNetwork);
+  app.post("/get-network", new NetworkModule().getNetworksList);
 };
