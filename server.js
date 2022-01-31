@@ -20,7 +20,7 @@ class Server {
     }
 
     static listen() {
-        Promise.all([DBConnection.connect(), WebSocketService.connect()]).then(async () => {
+        Promise.all([DBConnection.connect()]).then(async () => {
             Server.startNodeApp()
         }).catch(error => lhtWebLog('listen', 'failed to connect', {error}, 'AyushK', httpConstants.LOG_LEVEL_TYPE.ERROR))
     }

@@ -28,6 +28,7 @@ export default class Manger {
         "Address already Exists",
         httpConstants.RESPONSE_CODES.BAD_REQUEST
       );
+    
     return await this.getContractByToken(contractAddress);
   };
 
