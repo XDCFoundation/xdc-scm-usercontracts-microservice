@@ -1,8 +1,9 @@
 import ContractModel from "../../models/contract";
 import Utils from "../../utils";
 import { httpConstants , apiFailureMessage } from "../../common/constants";
-
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
+import NetworkModel from "../../models/network";
+import WebSocketService from "../../service/WebsocketService";
 
 export default class Manger {
   addContract = async ({ contractAddress, userId }) => {
@@ -28,7 +29,18 @@ export default class Manger {
         "Address already Exists",
         httpConstants.RESPONSE_CODES.BAD_REQUEST
       );
-    return await this.getContractByToken(contractAddress);
+      
+    
+    const url = await NetworkModel.find({});
+    for(let i = 0; i<url.length; i++){
+    WebSocketService.connect(url[i].newRpcUrl);
+    let res = await this.getContractByToken(contractAddress);
+    if(res!=={}){
+    return res;
+    }
+    else
+    continue;
+    }
   };
 
   addTagToContract = async ({ contractId, tags }) => {
