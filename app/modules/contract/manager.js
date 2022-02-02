@@ -32,19 +32,17 @@ export default class Manger {
       
     
     const url = await NetworkModel.find({});
-    for(let i = 0; i<url.length; i++){
-    WebSocketService.connect(url[i].newRpcUrl);
+    for(let index = 0; index<url.length; index++){
+    WebSocketService.connect(url[index].newRpcUrl);
     let param = {
       contract: contractAddress,
-      network: url[i].newRpcUrl
+      network: url[index].newRpcUrl
     }
     let res = await this.getContractByToken(param);
-    if(res!=={}){
-    return res;
-    }
-    else
+    if(!res)
     continue;
-    }
+    return res;
+  }
   };
 
   addTagToContract = async ({ contractId, tags }) => {

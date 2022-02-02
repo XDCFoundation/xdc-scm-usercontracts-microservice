@@ -20,7 +20,18 @@ export default class WebSocketService {
             return true;
         } catch (err) {
             lhtWebLog('webSocketConnection', 'error in connection ', err, 'AyushK', httpConstants.LOG_LEVEL_TYPE.ERROR)
-            throw err
+            global.web3 = new Web3(new Web3.providers.WebsocketProvider(url, {
+                clientConfig: {
+                    keepalive: true,
+                    keepaliveInterval: 60000,
+                },
+                reconnect: {
+                    auto: true,
+                    delay: 2500,
+                    onTimeout: true,
+                }
+            }));
+            // throw err
         }
     }
 }
