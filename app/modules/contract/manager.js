@@ -34,7 +34,11 @@ export default class Manger {
     const url = await NetworkModel.find({});
     for(let i = 0; i<url.length; i++){
     WebSocketService.connect(url[i].newRpcUrl);
-    let res = await this.getContractByToken(contractAddress);
+    let param = {
+      contract: contractAddress,
+      network: url[i].newRpcUrl
+    }
+    let res = await this.getContractByToken(param);
     if(res!=={}){
     return res;
     }
@@ -82,19 +86,20 @@ export default class Manger {
     return await ContractModel.distinct("tags");
   };
 
-  getContractByToken = async (contractAddress) => {
-    const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
+  getContractByToken = async (param) => {
+    const contract = new web3.eth.Contract(ERC20ABI, param.contract);
     const call = await web3.eth.call({
-      to: contractAddress,
+      to: param.contract,
       data: web3.utils.sha3("totalSupply()"),
     });
     let isTokenContract = true;
     const contractDB = {
-      address: contractAddress,
+      address: param.contract,
       tokenName: "",
       symbol: "",
       decimals: 0,
       totalSupply: 0,
+      network: param.network,
     };
     if (call === "0x") {
       isTokenContract = false;
@@ -113,7 +118,7 @@ export default class Manger {
         );
       }
     }
-    contractDB.byteCode = await web3.eth.getCode(contractAddress);
+    contractDB.byteCode = await web3.eth.getCode(param.contract);
     return contractDB;
   };
 
