@@ -36,7 +36,8 @@ export default class Manger {
     WebSocketService.connect(url[index].newRpcUrl);
     let param = {
       contract: contractAddress,
-      network: url[index].newRpcUrl
+      network: url[index].newRpcUrl,
+      networkName: url[index].networkName
     }
     let res = await this.getContractByToken(param);
     if(!res)
@@ -98,6 +99,7 @@ export default class Manger {
       decimals: 0,
       totalSupply: 0,
       network: param.network,
+      networkName: param.networkName
     };
     if (call === "0x") {
       isTokenContract = false;
