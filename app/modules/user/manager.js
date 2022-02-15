@@ -19,13 +19,14 @@ export default class Manger {
     let response;
     try {
       response = await this.getUserDetails({ accountAddress });
-    } catch (error) {
-      throw error;
-    }
+   
     if (response.accountAddress) {
         return response;
     }
     const userObject = new UserModel({accountAddress : accountAddress});
     return await userObject.save();
+  } catch (error) {
+    throw error;
+  }
   };
 }
