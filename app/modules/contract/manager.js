@@ -3,15 +3,27 @@ import Utils from "../../utils";
 import { httpConstants , apiFailureMessage } from "../../common/constants";
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 import NetworkModel from "../../models/network";
+import QueueController from "../queue";
 import WebSocketService from "../../service/WebsocketService";
+import XdcService from "../../service/xdcService";
 
 export default class Manger {
-  addContract = async ({ contractAddress, userId }) => {
-    let contractDB = await this.checkAddress({ contractAddress });
-    contractDB["userId"] = userId;
-    const contractObject = new ContractModel(contractDB);
-    return await contractObject.save();
-  };
+  addContract = async ({contractAddress, userId}) => {
+    const isContractExist = await ContractModel.getAccount({address: contractAddress, userId: userId});
+    if (isContractExist)
+      return Utils.returnRejection("Contract already exists!", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+
+    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    if (!contractDetails)
+      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+    delete contractDetails._id
+
+    const contractObject = new ContractModel({...contractDetails, userId})
+    await contractObject.save();
+
+    new QueueController().insertInQueue({contractAddress, userId}, "CONTRACT_ADDED")
+    return contractObject;
+  }
 
   checkAddress = async ({ contractAddress }) => {
     if (!contractAddress)
@@ -29,8 +41,8 @@ export default class Manger {
         "Address already Exists",
         httpConstants.RESPONSE_CODES.BAD_REQUEST
       );
-      
-    
+
+
     const url = await NetworkModel.find({});
     for(let index = 0; index<url.length; index++){
     WebSocketService.connect(url[index].newRpcUrl);

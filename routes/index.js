@@ -13,7 +13,7 @@ module.exports = (app) => {
     /**
      * route definition
      */
-    app.post("/contract", new ContractModule().addContract);
+    app.post("/contract", ValidationManger.addContract, new ContractModule().addContract);
     app.get("/contract",ValidationManger.checkForIdQuery, new ContractModule().getContractById);
     app.post("/contract-list", new ContractModule().getContractsList);
     app.post("/hide-contract", ValidationManger.checkForId, new ContractModule().hideContract);
