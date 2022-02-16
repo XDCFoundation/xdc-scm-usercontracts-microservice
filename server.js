@@ -4,7 +4,7 @@ import Utils from './app/utils'
 import Config from './config'
 import routes from './routes'
 import {httpConstants} from './app/common/constants'
-import WebSocketService from "./app/service/WebsocketService";
+import AMQP from "./library";
 
 const app = new APP()
 require('./config/express')(app)
@@ -20,7 +20,7 @@ class Server {
     }
 
     static listen() {
-        Promise.all([DBConnection.connect()]).then(async () => {
+        Promise.all([DBConnection.connect(), AMQP.conn(Config.AMQP_HOST_URL, true)]).then(async () => {
             Server.startNodeApp()
         }).catch(error => lhtWebLog('listen', 'failed to connect', {error}, 'AyushK', httpConstants.LOG_LEVEL_TYPE.ERROR))
     }
