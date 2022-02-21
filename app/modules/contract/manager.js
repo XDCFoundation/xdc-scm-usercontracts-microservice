@@ -2,9 +2,7 @@ import ContractModel from "../../models/contract";
 import Utils from "../../utils";
 import { httpConstants , apiFailureMessage } from "../../common/constants";
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
-import NetworkModel from "../../models/network";
 import QueueController from "../queue";
-import WebSocketService from "../../service/WebsocketService";
 import XdcService from "../../service/xdcService";
 
 export default class Manger {
@@ -26,36 +24,10 @@ export default class Manger {
   }
 
   checkAddress = async ({ contractAddress }) => {
-    if (!contractAddress)
-      return Utils.returnRejection(
-        "contract address is required",
-        httpConstants.RESPONSE_CODES.BAD_REQUEST
-      );
-    const response = await ContractModel.find({ address: contractAddress });
-    if (
-      response[0] &&
-      response[0].address &&
-      response[0].address === contractAddress
-    )
-      return Utils.returnRejection(
-        "Address already Exists",
-        httpConstants.RESPONSE_CODES.BAD_REQUEST
-      );
-
-
-    const url = await NetworkModel.find({});
-    for(let index = 0; index<url.length; index++){
-    WebSocketService.connect(url[index].newRpcUrl);
-    let param = {
-      contract: contractAddress,
-      network: url[index].newRpcUrl,
-      networkName: url[index].networkName
-    }
-    let res = await this.getContractByToken(param);
-    if(!res)
-    continue;
-    return res;
-  }
+    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    if (!contractDetails)
+      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+    return contractDetails;
   };
 
   addTagToContract = async ({ contractId, tags }) => {
