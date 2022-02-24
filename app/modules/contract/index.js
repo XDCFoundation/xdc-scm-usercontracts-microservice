@@ -18,9 +18,15 @@ export default class Index {
   }
 
   async getContractsList (request, response) {
-    console.log("THIS IS Entry Point Index FUNCTION")
     lhtWebLog('Inside getContractsList', request.body, 'getContractsList', 0, '')
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getContractsList(request.body))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+
+  async getSCMContracts (request, response) {
+    lhtWebLog('Inside getSCMContracts', request.body, 'getSCMContracts', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getSCMContracts(request.body))
     if (!getMetersRes) { return Utils.handleError(error, request, response) }
     return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
   }
