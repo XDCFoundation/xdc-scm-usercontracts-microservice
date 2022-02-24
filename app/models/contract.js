@@ -59,6 +59,9 @@ ContractSchema.static({
     getAccountList: function (findObj, selectionKey = "", skip = 0, limit = 0, sort = 1) {
         return this.find(findObj, selectionKey).skip(skip).limit(limit).sort(sort);
     },
+    getContracts: function (findObj, selectionKey = "") {
+        return this.find(findObj, selectionKey);
+    },
     bulkUpsert: function (bulkOps) {
         return this.bulkWrite(bulkOps);
     },

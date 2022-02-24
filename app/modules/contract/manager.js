@@ -208,6 +208,12 @@ export default class Manger {
     return { contractList, totalCount };
   };
 
+  getSCMContracts = async ({contracts}) => {
+    let SCMContracts = await ContractModel.getContracts({address: {$in: contracts}}, "address ")
+    SCMContracts = SCMContracts.map(contracts => contracts.address)
+    return SCMContracts;
+  };
+
   parseGetContractListRequest = (requestObj) => {
     if (!requestObj) return {};
     let skip = 0;
