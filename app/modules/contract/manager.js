@@ -65,7 +65,9 @@ export default class Manger {
     return responseUpdate;
   };
 
-  getListOfTags = async () => {
+  getListOfTags = async (request) => {
+    if(request.userId)
+      return await ContractModel.distinct("tags",{userId:request.userId});
     return await ContractModel.distinct("tags");
   };
 
