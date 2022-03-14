@@ -17,6 +17,7 @@ export default class Manger {
     delete contractDetails._id
 
     const contractObject = new ContractModel({...contractDetails, userId})
+    contractObject["contractName"]=contractObject && contractObject.tokenName
     await contractObject.save();
 
     new QueueController().insertInQueue({contractAddress, userId}, "CONTRACT_ADDED")
