@@ -15,6 +15,7 @@ module.exports = (app) => {
      */
     app.post("/contract", ValidationManger.addContract, new ContractModule().addContract);
     app.get("/contract",ValidationManger.checkForIdQuery, new ContractModule().getContractById);
+    app.get("/contract/:address", new ContractModule().getContractByAddress);
     app.post("/contract-list", new ContractModule().getContractsList);
     app.post("/hide-contract", ValidationManger.checkForId, new ContractModule().hideContract);
     app.post("/show-contract",ValidationManger.checkForId,  new ContractModule().showContract);

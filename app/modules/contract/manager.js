@@ -117,7 +117,14 @@ export default class Manger {
       httpConstants.RESPONSE_CODES.NOT_FOUND
     );
   };
-
+  getContractByAddress= async ({ address }) => {
+    const response = await ContractModel.getAccount({ address: address });
+    if (response.address) return response;
+    return Utils.returnRejection(
+      apiFailureMessage.INVALID_ADDRESS,
+      httpConstants.RESPONSE_CODES.NOT_FOUND
+    );
+  };
   renameContract = async ({ id, contractName }) => {
     let response = await ContractModel.findOne({ _id: id });
     if (!response)
