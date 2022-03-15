@@ -83,6 +83,7 @@ export const apiFailureMessage = {
   SESSION_GENERATION: 'Unable to generate session!',
   SESSION_EXPIRED: 'Session Expired!',
   INVALID_ID: "Invalid Id",
+  INVALID_ADDRESS:"Invalid Address",
   USER_ID_MISSING: "user id is required"
 
 }
