@@ -22,6 +22,7 @@ module.exports = (app) => {
     app.delete("/contract",ValidationManger.checkForId, new ContractModule().removeContract);
     app.put("/contract-name",ValidationManger.renameContract , new ContractModule().renameContract);
     app.post("/scm-contracts", new ContractModule().getSCMContracts);
+    app.post("/alert-contracts", new ContractModule().getAlertContracts);
 
     app.get("/tags", new ContractModule().getListOfTags);
     app.post("/tags",ValidationManger.addTagToContract,  new ContractModule().addTagToContract);
