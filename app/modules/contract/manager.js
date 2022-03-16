@@ -31,17 +31,32 @@ export default class Manger {
     return contractDetails;
   };
 
-  addTagToContract = async ({ contractId, tags }) => {
-    let contract = await ContractModel.findOne({ _id: contractId });
+  addTagToContract = async ({ contractId, tags , userId }) => {
+    let findTag = await ContractModel.findOne({userId : userId , "tags.name" : { $in : tags}} , {tags:1});
+    findTag=JSON.stringify(findTag)
+    findTag=JSON.parse(findTag)
+    let contract = await ContractModel.findOne({ _id: contractId});
     let contractTags = [];
     if (contract.tags && contract.tags.length && contract.tags.length > 0)
-      contractTags = contract.tags;
+      contractTags = contract.tags.map(({name}) => name);
+      contractTags = new Set(contractTags);
+      contractTags= Array.from(contractTags);
+    let newTags=[];  
     tags.forEach((tag) => {
-      if (!contractTags.includes(tag)) contractTags.push(tag);
+      if (!contractTags.includes(tag)) 
+    { 
+       if(findTag)
+      {
+        findTag = findTag.tags.find((filterTag)=>{ if (filterTag.name===tag) return filterTag;});
+        newTags.push({name:findTag.name , _id:findTag._id});
+      }
+      else
+      newTags.push({name:tag});
+    }
     });
     const responseUpdate = await ContractModel.updateAccount(
       { _id: contractId },
-      { tags: contractTags }
+      { $push: { tags: { $each: newTags } } }
     );
     return responseUpdate;
   };
@@ -56,8 +71,9 @@ export default class Manger {
     let contractTags = [];
     if (contract.tags && contract.tags.length && contract.tags.length > 0)
       contractTags = contract.tags;
+      
     tags.forEach((tag) => {
-      contractTags = contractTags.filter((e) => e !== tag);
+      contractTags = contractTags.filter(({name}) => name !== tag);
     });
     const responseUpdate = await ContractModel.updateAccount(
       { _id: contractId },
@@ -223,7 +239,9 @@ export default class Manger {
     SCMContracts = SCMContracts.map(contracts => contracts.address)
     return SCMContracts;
   };
-
+  getAlertContracts = async ({contracts}) => {
+    return await ContractModel.getContracts({address: {$in: contracts} , isDeleted: false},{address:1,tags:1});
+  };
   parseGetContractListRequest = (requestObj) => {
     if (!requestObj) return {};
     let skip = 0;

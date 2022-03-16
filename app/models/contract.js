@@ -5,7 +5,8 @@ const ContractSchema = new Schema({
     userId : { type: String , required: true },
     address: { type: String, default: "" },
     contractName: { type: String, default: "" },
-    tags : {type: Array, default : []},
+    tags : [ { name:{type: String, default : ""}}
+    ],
     network: { type: String, default: "" },
     compilerVersion:{ type: String, default: "" },
     abi: { type: String, default: "" },

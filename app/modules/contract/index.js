@@ -37,6 +37,12 @@ export default class Index {
     return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
   }
 
+  async getAlertContracts (request, response) {
+  lhtWebLog('Inside getAlertContracts', request.body, 'getAlertContracts', 0, '')
+  const [error, getMetersRes] = await Utils.parseResponse(new BLManager().getAlertContracts(request.body))
+  if (!getMetersRes) { return Utils.handleError(error, request, response) }
+  return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
   async hideContract (request, response) {
     lhtWebLog('Inside hideContract', request.body, 'hideContract', 0, '')
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().hideContract(request.body))
