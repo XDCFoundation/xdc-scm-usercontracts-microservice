@@ -125,6 +125,15 @@ export default class Manger {
     return contractDB;
   };
 
+  getContractById = async ({ id }) => {
+    const response = await ContractModel.getAccount({ _id: id });
+    if (response.address) return response;
+    return Utils.returnRejection(
+      apiFailureMessage.INVALID_ID,
+      httpConstants.RESPONSE_CODES.NOT_FOUND
+    );
+  };
+
   updateContract = async ({contractAddress , userId}) => {
     const isContractExist = await ContractModel.getAccount({address: contractAddress , userId : userId});
     if (!isContractExist)
@@ -144,18 +153,6 @@ export default class Manger {
   }
     return await ContractModel.getAccount({address: contractAddress , userId : userId});
     
-  };
-
-  getContractByTag = async (request) => {
-    const response = await ContractModel.getAccountList({
-      userId : request.userId,
-      "tags.name" : request.tag
-    });
-    if (response.length) return response;
-    return Utils.returnRejection(
-      apiFailureMessage.INVALID_ID,
-      httpConstants.RESPONSE_CODES.NOT_FOUND
-    );
   };
 
   getContractByAddress= async ({ address }) => {
