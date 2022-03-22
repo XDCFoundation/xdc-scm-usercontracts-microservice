@@ -125,14 +125,39 @@ export default class Manger {
     return contractDB;
   };
 
-  getContractById = async ({ id }) => {
-    const response = await ContractModel.getAccount({ _id: id });
-    if (response.address) return response;
+  updateContract = async ({contractAddress , userId}) => {
+    const isContractExist = await ContractModel.getAccount({address: contractAddress , userId : userId});
+    if (!isContractExist)
+      return Utils.returnRejection("Contract does not exists!", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+
+    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    if (!contractDetails)
+      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+    if(contractDetails.sourceCode && contractDetails.abi && contractDetails.compilerVersion)  {
+    const updateObject = {
+      sourceCode : contractDetails.sourceCode,
+      abi : contractDetails.abi,
+      compilerVersion : contractDetails.compilerVersion,
+      status :  contractDetails.status,
+    }
+    await ContractModel.updateManyAccounts({address : contractAddress} , updateObject);
+  }
+    return await ContractModel.getAccount({address: contractAddress , userId : userId});
+    
+  };
+
+  getContractByTag = async (request) => {
+    const response = await ContractModel.getAccountList({
+      userId : request.userId,
+      "tags.name" : request.tag
+    });
+    if (response.length) return response;
     return Utils.returnRejection(
       apiFailureMessage.INVALID_ID,
       httpConstants.RESPONSE_CODES.NOT_FOUND
     );
   };
+
   getContractByAddress= async ({ address }) => {
     const response = await ContractModel.getAccount({ address: address });
     if (response.address) return response;
