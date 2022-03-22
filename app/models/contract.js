@@ -57,7 +57,7 @@ ContractSchema.static({
     updateManyAccounts: function (findObj, updateObj) {
         return this.updateMany(findObj, updateObj);
     },
-    getAccountList: function (findObj, selectionKey = "", skip = 0, limit = 0, sort = 1) {
+    getAccountList: function (findObj, selectionKey = "", skip = 0, limit = 0, sort = "1") {
         return this.find(findObj, selectionKey).skip(skip).limit(limit).sort(sort);
     },
     getContracts: function (findObj, selectionKey = "") {
