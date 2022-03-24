@@ -21,7 +21,7 @@ const ContractSchema = new Schema({
     owner: { type: String, default: "" },
     decimals: { type: Number, default: "" },
     totalSupply: { type: Number, default: "" },
-    createdOn: { type: Number, default: Date.now() },
+    addedOn: { type: Number, default: Date.now() },
     modifiedOn: { type: Number, default: Date.now() },
     isHidden: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
