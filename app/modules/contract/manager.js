@@ -18,6 +18,7 @@ export default class Manger {
 
     const contractObject = new ContractModel({...contractDetails, userId})
     contractObject["contractName"]=contractObject && contractObject.tokenName
+    contractObject["addedOn"] = Date.now();
     await contractObject.save();
 
     new QueueController().insertInQueue({contractAddress, userId}, "CONTRACT_ADDED")
