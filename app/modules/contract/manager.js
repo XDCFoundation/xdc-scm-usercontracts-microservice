@@ -135,25 +135,22 @@ export default class Manger {
     );
   };
 
-  updateContract = async ({contractAddress , userId}) => {
-    const isContractExist = await ContractModel.getAccount({address: contractAddress , userId : userId});
+  updateContract = async ({contractAddress}) => {
+    const isContractExist = await ContractModel.getAccount({address: contractAddress});
     if (!isContractExist)
       return Utils.returnRejection("Contract does not exists!", httpConstants.RESPONSE_CODES.BAD_REQUEST)
 
     const contractDetails = await XdcService.getContractDetails(contractAddress)
     if (!contractDetails)
       return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-    if(contractDetails.sourceCode && contractDetails.abi && contractDetails.compilerVersion)  {
+
     const updateObject = {
       sourceCode : contractDetails.sourceCode,
       abi : contractDetails.abi,
       compilerVersion : contractDetails.compilerVersion,
       status :  contractDetails.status,
     }
-    await ContractModel.updateManyAccounts({address : contractAddress} , updateObject);
-  }
-    return await ContractModel.getAccount({address: contractAddress , userId : userId});
-    
+    return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
   };
 
   getContractByAddress= async ({ address }) => {
