@@ -1,0 +1,599 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "User contracts MicroService",
+        "description": "MicroService to manage contracts related to user in the system",
+        "license": {
+            "name": "Leewayhertz",
+            "url": "http://leewayhertz.com"
+        }
+    },
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/contract": {
+            "post": {
+                "description": "Import Contract",
+                "summary": "Imports a contract for given userId",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "contract",
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/ImportContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "get": {
+                "description": "Get Contract details",
+                "summary": "Fetch a contract details with contractId",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "description": "Update all contract details for given contract address",
+                "summary": "Update a contract details with contract address",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "updateContract",
+                        "in": "body",
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete contract for user",
+                "summary": "Delete a contract details with contractId",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Delete Contract",
+                        "in": "body",
+                        "required": true,
+                        "type": "string",
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/contract-list": {
+            "post": {
+                "description": "Paginated API for contract listing",
+                "summary": "Paginated API for contract listing",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Contract List",
+                        "in": "body",
+                        "required": true,
+                        "type": "number",
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ContractList"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/contract/{address}": {
+            "post": {
+                "description": "Get Contract Details",
+                "summary": "Get Contract Details using contract address",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/UserId"
+                        }
+                    },
+                    {
+                        "name": "contractAddress",
+                        "in": "path",
+                        "required": false,
+                        "type": "string",
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/hide-contract": {
+            "post": {
+                "description": "Hide Contract",
+                "summary": "Hide Contract from Transactions Page",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/show-contract": {
+            "post": {
+                "description": "Show Contract",
+                "summary": "Show Contract at Transactions Page",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/contract-name": {
+            "post": {
+                "description": "Rename Contract",
+                "summary": "Rename Contract for user at system",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteContract"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/scm-contracts": {
+            "post": {
+                "description": "SCM Contracts",
+                "summary": "Get Contracts for Blockchain Follower",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "contracts",
+                        "in": "body",
+                        "required": true,
+                        "description": "Array of Contract Addresses",
+                        "schema": {
+                            "$ref": "#/definitions/ContractArray"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/alert-contracts": {
+            "post": {
+                "description": "Alert Contracts",
+                "summary": "Get Contracts for Alert microservice",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "contracts",
+                        "in": "body",
+                        "required": true,
+                        "description": "Array of Contract Addresses",
+                        "schema": {
+                            "$ref": "#/definitions/ContractArray"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/check-address": {
+            "post": {
+                "description": "Check address",
+                "summary": "Check if contract already imported or not",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "contractAddress",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "Array of Contract Addresses"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/tags": {
+            "get": {
+                "description": "Get List of Tags",
+                "summary": "Get List of Tags for user",
+                "tags": [
+                    "Tags"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "description": "Add Tags",
+                "summary": "Add Tag for Contract",
+                "tags": [
+                    "Tags"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Add Tags",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/AddTags"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove Tags",
+                "summary": "Remove Tag for Contract",
+                "tags": [
+                    "Tags"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Remove Tags",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteTags"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "description": "Add User",
+                "summary": "Add user to system",
+                "tags": [
+                    "Users"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountAddress",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "get": {
+                "description": "Get User",
+                "summary": "Get User Details",
+                "tags": [
+                    "Users"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountAddress",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ImportContract": {
+            "properties": {
+                "contractaddress": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateContract": {
+            "properties": {
+                "contractaddress": {
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteContract": {
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "ContractList": {
+            "properties": {
+                "userId": {
+                   "type": "string"
+                },
+                "skip": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "string"
+                },
+                "selectionKeys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                      }
+                },
+                "searchKeys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                      }
+                },
+                "sortingKey": {
+                    "type": "string"
+                },
+                "searchValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserId": {
+            "properties": {
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "ContractArray": {
+            "properties": {
+                "contracts": {
+                    "type": "array" ,
+                     "items": {
+                        "type": "string"
+                      }
+                }
+            }
+        },
+        "AddTags": {
+            "properties": {
+                "tags": {
+                    "type": "array" ,
+                     "items": {
+                        "type": "string"
+                      }
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "contractId": {
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteTags": {
+            "properties": {
+                "tags": {
+                    "type": "array" ,
+                     "items": {
+                        "type": "string"
+                      }
+                },
+                "contractId": {
+                    "type": "string"
+                }
+            }
+        },
+        "User": {
+            "properties": {
+                "contractAddress": {
+                    "type": "string"
+                }
+            }
+        }
+        
+    }
+}
