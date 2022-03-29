@@ -153,8 +153,8 @@ export default class Manger {
     return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
   };
 
-  getContractByAddress= async ({ address }) => {
-    const response = await ContractModel.getAccount({ address: address });
+  getContractByAddress= async (params , req) => {
+    const response = await ContractModel.getAccount({ address: params.address , userId:req.userId});
     if (response.address) return response;
     return Utils.returnRejection(
       apiFailureMessage.INVALID_ADDRESS,
