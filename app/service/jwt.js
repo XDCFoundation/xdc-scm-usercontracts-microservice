@@ -16,7 +16,6 @@ export default class XdcService {
                 return decoded;
           } catch(err) {
             // err
-            if(err.name === 'TokenExpiredError')
                 return false;
           }
     }
