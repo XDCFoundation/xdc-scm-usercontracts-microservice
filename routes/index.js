@@ -34,6 +34,7 @@ module.exports = (app) => {
     app.post("/scm-contracts", new ContractModule().getSCMContracts);
     app.post("/alert-contracts", new ContractModule().getAlertContracts);
     app.get("/check-address",authenticate, new ContractModule().checkAddress);
+    app.get("/check-verify-contract",authenticate, new ContractModule().checkVerifyContract);
 
 
     app.get("/tags",authenticate, new ContractModule().getListOfTags);
