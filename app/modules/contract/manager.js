@@ -36,7 +36,13 @@ export default class Manger {
     const contractDetails = await XdcService.getContractDetails(contractAddress)
     if (!contractDetails || !contractDetails.sourceCode || !contractDetails.abi || !contractDetails.compilerVersion)
       return Utils.returnRejection("Contract Not Verified", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-    return contractDetails;
+      const updateObject = {
+        sourceCode : contractDetails.sourceCode,
+        abi : contractDetails.abi,
+        compilerVersion : contractDetails.compilerVersion,
+        status :  contractDetails.status,
+      }
+     return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
   };
 
   addTagToContract = async ({ contractId, tags , userId }) => {
