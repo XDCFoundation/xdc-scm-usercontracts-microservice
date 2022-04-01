@@ -32,6 +32,13 @@ export default class Manger {
     return contractDetails;
   };
 
+  checkVerifyContract =   async ({ contractAddress }) => {
+    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    if (!contractDetails || !contractDetails.sourceCode || !contractDetails.abi || !contractDetails.compilerVersion)
+      return Utils.returnRejection("Contract Not Verified", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+    return contractDetails;
+  };
+
   addTagToContract = async ({ contractId, tags , userId }) => {
     let findTag = await ContractModel.findOne({userId : userId , "tags.name" : { $in : tags}} , {tags:1});
     findTag=JSON.stringify(findTag)

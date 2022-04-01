@@ -95,8 +95,14 @@ export default class Index {
     return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
   }
   async checkAddress (request, response) {
-    lhtWebLog('Inside renameContract', request.query, 'renameContract', 0, '')
+    lhtWebLog('Inside checkAddress', request.query, 'checkAddress', 0, '')
     const [error, getMetersRes] = await Utils.parseResponse(new BLManager().checkAddress(request.query))
+    if (!getMetersRes) { return Utils.handleError(error, request, response) }
+    return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
+  }
+  async checkVerifyContract  (request, response) {
+    lhtWebLog('Inside checkVerifyContract', request.query, 'checkVerifyContract', 0, '')
+    const [error, getMetersRes] = await Utils.parseResponse(new BLManager().checkVerifyContract(request.query))
     if (!getMetersRes) { return Utils.handleError(error, request, response) }
     return Utils.response(response, getMetersRes, apiSuccessMessage.FETCH_SUCCESS, httpConstants.RESPONSE_STATUS.SUCCESS, httpConstants.RESPONSE_CODES.OK)
   }
