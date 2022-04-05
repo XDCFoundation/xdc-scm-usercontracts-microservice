@@ -33,7 +33,7 @@ module.exports = (app) => {
     app.put("/contract-name",authenticate,ValidationManger.renameContract , new ContractModule().renameContract);
     app.post("/scm-contracts", new ContractModule().getSCMContracts);
     app.post("/alert-contracts", new ContractModule().getAlertContracts);
-    app.get("/check-address",authenticate, new ContractModule().checkAddress);
+    app.get("/check-address",authenticate, ValidationManger.checkAddress, new ContractModule().checkAddress);
     app.get("/check-verify-contract",authenticate, new ContractModule().checkVerifyContract);
 
 
