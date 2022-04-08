@@ -35,8 +35,8 @@ ContractSchema.method({
 });
 
 ContractSchema.static({
-    getAccount: function (findQuery) {
-        return this.findOne(findQuery);
+    getAccount: function (findQuery, selectionKey = "") {
+        return this.findOne(findQuery ,selectionKey);
     },
 
     updateAccount: function (findObj, updateObj) {

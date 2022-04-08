@@ -4,6 +4,8 @@ import { httpConstants , apiFailureMessage } from "../../common/constants";
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 import QueueController from "../queue";
 import XdcService from "../../service/xdcService";
+import HTTPService from "../../service/http-service";
+import Config from "../../../config";
 
 export default class Manger {
   addContract = async ({contractAddress, userId}) => {
@@ -238,8 +240,16 @@ export default class Manger {
     );
   };
 
-  removeContract = async ({ id }) => {
+  removeContract = async ({ id , userId}) => {
+    const contract = await ContractModel.getAccount({ _id: id } , {address : 1 , tags :1});
     const response = await ContractModel.removeData({ _id: id });
+    let tagIds = Array.from(new Set(contract.tags.map(a => a._id)))
+    let req = {
+      userId : userId,
+      contractAddress : contract.address,
+      tags : tagIds
+    }
+    await HTTPService.executeHTTPRequest(httpConstants.METHOD_TYPE.PUT,Config.ALERT_MIROSERVICE_URL , `/remove-contract-alerts`, req,{})
     if (response.deletedCount === 1) return "Remove Success";
     return Utils.returnRejection(
       apiFailureMessage.INVALID_ID,
