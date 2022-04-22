@@ -4,7 +4,8 @@ let Schema = mongoose.Schema;
 const UserSchema = new Schema({
     username: { type: String, default: "" },
     accountAddress : { type: String, default: "" , required : true, unique : true},
-    profilePicture : { type: String, default: "" }
+    profilePicture : { type: String, default: "" },
+    sessionToken : { type: String, default: "" },
 });
 
 UserSchema.method({

@@ -4,13 +4,15 @@ import { httpConstants, apiFailureMessage } from "../../common/constants";
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 import QueueController from "../queue";
 import XdcService from "../../service/xdcService";
+import HTTPService from "../../service/http-service";
+import Config from "../../../config";
 
 export default class Manger {
   addContract = async ({contractAddress, userId}) => {
     let finalArray = [];
-    for(let i = 0; i < contractAddress.length; i++){
+    for(let index = 0; index < contractAddress.length; index++){
     const isContractExist = await ContractModel.getAccount({
-      address: contractAddress[i],
+      address: contractAddress[index],
       userId: userId,
     });
     if (isContractExist)
@@ -19,7 +21,7 @@ export default class Manger {
         httpConstants.RESPONSE_CODES.BAD_REQUEST
       );
     const contractDetails = await XdcService.getContractDetails(
-      contractAddress[i]
+      contractAddress[index]
     );
     if (!contractDetails)
       return Utils.returnRejection(
@@ -51,14 +53,24 @@ export default class Manger {
     return contractDetails;
   };
 
-  addTagToContract = async ({ contractId, tags, userId }) => {
-    let findTag = await ContractModel.findOne(
-      { userId: userId, "tags.name": { $in: tags } },
-      { tags: 1 }
-    );
-    findTag = JSON.stringify(findTag);
-    findTag = JSON.parse(findTag);
-    let contract = await ContractModel.findOne({ _id: contractId });
+  checkVerifyContract =   async ({ contractAddress }) => {
+    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    if (!contractDetails || !contractDetails.sourceCode || !contractDetails.abi || !contractDetails.compilerVersion)
+      return Utils.returnRejection("Contract Not Verified", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+      const updateObject = {
+        sourceCode : contractDetails.sourceCode,
+        abi : contractDetails.abi,
+        compilerVersion : contractDetails.compilerVersion,
+        status :  contractDetails.status,
+      }
+     return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
+  };
+
+  addTagToContract = async ({ contractId, tags , userId }) => {
+    let findTag = await ContractModel.findOne({userId : userId , "tags.name" : { $in : tags}} , {tags:1});
+    findTag=JSON.stringify(findTag)
+    findTag=JSON.parse(findTag)
+    let contract = await ContractModel.findOne({ _id: contractId});
     let contractTags = [];
     if (contract.tags && contract.tags.length && contract.tags.length > 0)
       contractTags = contract.tags.map(({ name }) => name);
@@ -155,11 +167,8 @@ export default class Manger {
     );
   };
 
-  updateContract = async ({ contractAddress, userId }) => {
-    const isContractExist = await ContractModel.getAccount({
-      address: contractAddress,
-      userId: userId,
-    });
+  updateContract = async ({contractAddress}) => {
+    const isContractExist = await ContractModel.getAccount({address: contractAddress});
     if (!isContractExist)
       return Utils.returnRejection(
         "Contract does not exists!",
@@ -170,34 +179,19 @@ export default class Manger {
       contractAddress
     );
     if (!contractDetails)
-      return Utils.returnRejection(
-        "No contract found",
-        httpConstants.RESPONSE_CODES.BAD_REQUEST
-      );
-    if (
-      contractDetails.sourceCode &&
-      contractDetails.abi &&
-      contractDetails.compilerVersion
-    ) {
-      const updateObject = {
-        sourceCode: contractDetails.sourceCode,
-        abi: contractDetails.abi,
-        compilerVersion: contractDetails.compilerVersion,
-        status: contractDetails.status,
-      };
-      await ContractModel.updateManyAccounts(
-        { address: contractAddress },
-        updateObject
-      );
+      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+
+    const updateObject = {
+      sourceCode : contractDetails.sourceCode,
+      abi : contractDetails.abi,
+      compilerVersion : contractDetails.compilerVersion,
+      status :  contractDetails.status,
     }
-    return await ContractModel.getAccount({
-      address: contractAddress,
-      userId: userId,
-    });
+    return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
   };
 
-  getContractByAddress = async ({ address }) => {
-    const response = await ContractModel.getAccount({ address: address });
+  getContractByAddress= async (params , req) => {
+    const response = await ContractModel.getAccount({ address: params.address , userId:req.userId});
     if (response.address) return response;
     return Utils.returnRejection(
       apiFailureMessage.INVALID_ADDRESS,
@@ -268,8 +262,16 @@ export default class Manger {
     );
   };
 
-  removeContract = async ({ id }) => {
+  removeContract = async ({ id , userId}) => {
+    const contract = await ContractModel.getAccount({ _id: id } , {address : 1 , tags :1});
     const response = await ContractModel.removeData({ _id: id });
+    let tagIds = Array.from(new Set(contract.tags.map(a => a._id)))
+    let req = {
+      userId : userId,
+      contractAddress : contract.address,
+      tags : tagIds
+    }
+    await HTTPService.executeHTTPRequest(httpConstants.METHOD_TYPE.PUT,Config.ALERT_MIROSERVICE_URL , `/remove-contract-alerts`, req,{})
     if (response.deletedCount === 1) return "Remove Success";
     return Utils.returnRejection(
       apiFailureMessage.INVALID_ID,

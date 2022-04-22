@@ -84,7 +84,8 @@ export const apiFailureMessage = {
   SESSION_EXPIRED: 'Session Expired!',
   INVALID_ID: "Invalid Id",
   INVALID_ADDRESS:"Invalid Address",
-  USER_ID_MISSING: "user id is required"
+  USER_ID_MISSING: "user id is required",
+  MISSING_TOKEN: "Session Token is required"
 
 }
 export const amqpConstants = {
