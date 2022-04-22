@@ -21,6 +21,7 @@ const ContractSchema = new Schema({
     owner: { type: String, default: "" },
     decimals: { type: Number, default: "" },
     totalSupply: { type: Number, default: "" },
+    tokenImage: { type: String, default: "" },
     createdOn: { type: Number, default: Date.now() },
     modifiedOn: { type: Number, default: Date.now() },
     isHidden: { type: Boolean, default: false },
@@ -66,5 +67,8 @@ ContractSchema.static({
     bulkUpsert: function (bulkOps) {
         return this.bulkWrite(bulkOps);
     },
+    findData: function (findObj) {
+        return this.find(findObj);
+    }
 });
 module.exports = mongoose.model("xin-contract", ContractSchema);
