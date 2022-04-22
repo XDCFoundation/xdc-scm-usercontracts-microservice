@@ -9,7 +9,7 @@ import Config from "../../../config";
 
 export default class Manger {
   addContract = async ({contractAddress, userId}) => {
-    let finalArray = [];
+    let contractArray = [];
     for(let index = 0; index < contractAddress.length; index++){
     const isContractExist = await ContractModel.getAccount({
       address: contractAddress[index],
@@ -31,14 +31,15 @@ export default class Manger {
     delete contractDetails._id;
     const contractObject = new ContractModel({ ...contractDetails, userId });
     contractObject["contractName"] = contractObject && contractObject.tokenName;
-    await contractObject.save();
-    finalArray.push(contractObject);
+    contractObject["addedOn"] = Date.now();
+    contractArray.push(contractObject);
     new QueueController().insertInQueue(
       { contractAddress, userId },
       "CONTRACT_ADDED"
     );
     }
-    return finalArray;
+    await ContractModel.collection.insertMany(contractArray);
+    return contractArray;
   };
 
   checkAddress = async ({ contractAddress }) => {
@@ -309,7 +310,7 @@ export default class Manger {
     let existingContracts = await ContractModel.findData({userId: requestData.userId});
     let owner = "xdc" + requestData.userId.slice(2);
     let requestDataObserver = {
-      owner: owner,
+      owner: {$regex: owner, $options: "i"},
     };
     const contractList = await XdcService.getContracts(
       requestDataObserver
