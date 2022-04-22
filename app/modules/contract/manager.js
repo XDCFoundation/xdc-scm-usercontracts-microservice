@@ -1,58 +1,79 @@
 import ContractModel from "../../models/contract";
 import Utils from "../../utils";
-import { httpConstants , apiFailureMessage } from "../../common/constants";
+import { httpConstants, apiFailureMessage } from "../../common/constants";
 let ERC20ABI = require("./jsonInterface").ERC20ABI;
 import QueueController from "../queue";
 import XdcService from "../../service/xdcService";
 
 export default class Manger {
   addContract = async ({contractAddress, userId}) => {
-    const isContractExist = await ContractModel.getAccount({address: contractAddress, userId: userId});
+    let finalArray = [];
+    for(let i = 0; i < contractAddress.length; i++){
+    const isContractExist = await ContractModel.getAccount({
+      address: contractAddress[i],
+      userId: userId,
+    });
     if (isContractExist)
-      return Utils.returnRejection("Contract already exists!", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-
-    const contractDetails = await XdcService.getContractDetails(contractAddress)
+      return Utils.returnRejection(
+        "Contract already exists!",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
+    const contractDetails = await XdcService.getContractDetails(
+      contractAddress[i]
+    );
     if (!contractDetails)
-      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-    delete contractDetails._id
-
-    const contractObject = new ContractModel({...contractDetails, userId})
-    contractObject["contractName"]=contractObject && contractObject.tokenName
+      return Utils.returnRejection(
+        "No contract found",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
+    delete contractDetails._id;
+    const contractObject = new ContractModel({ ...contractDetails, userId });
+    contractObject["contractName"] = contractObject && contractObject.tokenName;
     await contractObject.save();
-
-    new QueueController().insertInQueue({contractAddress, userId}, "CONTRACT_ADDED")
-    return contractObject;
-  }
+    finalArray.push(contractObject);
+    new QueueController().insertInQueue(
+      { contractAddress, userId },
+      "CONTRACT_ADDED"
+    );
+    }
+    return finalArray;
+  };
 
   checkAddress = async ({ contractAddress }) => {
-    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    const contractDetails = await XdcService.getContractDetails(
+      contractAddress
+    );
     if (!contractDetails)
-      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+      return Utils.returnRejection(
+        "No contract found",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
     return contractDetails;
   };
 
-  addTagToContract = async ({ contractId, tags , userId }) => {
-    let findTag = await ContractModel.findOne({userId : userId , "tags.name" : { $in : tags}} , {tags:1});
-    findTag=JSON.stringify(findTag)
-    findTag=JSON.parse(findTag)
-    let contract = await ContractModel.findOne({ _id: contractId});
+  addTagToContract = async ({ contractId, tags, userId }) => {
+    let findTag = await ContractModel.findOne(
+      { userId: userId, "tags.name": { $in: tags } },
+      { tags: 1 }
+    );
+    findTag = JSON.stringify(findTag);
+    findTag = JSON.parse(findTag);
+    let contract = await ContractModel.findOne({ _id: contractId });
     let contractTags = [];
     if (contract.tags && contract.tags.length && contract.tags.length > 0)
-      contractTags = contract.tags.map(({name}) => name);
-      contractTags = new Set(contractTags);
-      contractTags= Array.from(contractTags);
-    let newTags=[];  
+      contractTags = contract.tags.map(({ name }) => name);
+    contractTags = new Set(contractTags);
+    contractTags = Array.from(contractTags);
+    let newTags = [];
     tags.forEach((tag) => {
-      if (!contractTags.includes(tag)) 
-    { 
-       if(findTag)
-      {
-        findTag = findTag.tags.find((filterTag)=>{ if (filterTag.name===tag) return filterTag;});
-        newTags.push({name:findTag.name , _id:findTag._id});
+      if (!contractTags.includes(tag)) {
+        if (findTag) {
+          findTag = findTag.tags.find((filterTag) => {
+            if (filterTag.name === tag) return filterTag;
+          });
+          newTags.push({ name: findTag.name, _id: findTag._id });
+        } else newTags.push({ name: tag });
       }
-      else
-      newTags.push({name:tag});
-    }
     });
     const responseUpdate = await ContractModel.updateAccount(
       { _id: contractId },
@@ -71,9 +92,9 @@ export default class Manger {
     let contractTags = [];
     if (contract.tags && contract.tags.length && contract.tags.length > 0)
       contractTags = contract.tags;
-      
+
     tags.forEach((tag) => {
-      contractTags = contractTags.filter(({name}) => name !== tag);
+      contractTags = contractTags.filter(({ name }) => name !== tag);
     });
     const responseUpdate = await ContractModel.updateAccount(
       { _id: contractId },
@@ -83,8 +104,8 @@ export default class Manger {
   };
 
   getListOfTags = async (request) => {
-    if(request.userId)
-      return await ContractModel.distinct("tags",{userId:request.userId});
+    if (request.userId)
+      return await ContractModel.distinct("tags", { userId: request.userId });
     return await ContractModel.distinct("tags");
   };
 
@@ -102,7 +123,7 @@ export default class Manger {
       decimals: 0,
       totalSupply: 0,
       network: param.network,
-      networkName: param.networkName
+      networkName: param.networkName,
     };
     if (call === "0x") {
       isTokenContract = false;
@@ -134,28 +155,48 @@ export default class Manger {
     );
   };
 
-  updateContract = async ({contractAddress , userId}) => {
-    const isContractExist = await ContractModel.getAccount({address: contractAddress , userId : userId});
+  updateContract = async ({ contractAddress, userId }) => {
+    const isContractExist = await ContractModel.getAccount({
+      address: contractAddress,
+      userId: userId,
+    });
     if (!isContractExist)
-      return Utils.returnRejection("Contract does not exists!", httpConstants.RESPONSE_CODES.BAD_REQUEST)
+      return Utils.returnRejection(
+        "Contract does not exists!",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
 
-    const contractDetails = await XdcService.getContractDetails(contractAddress)
+    const contractDetails = await XdcService.getContractDetails(
+      contractAddress
+    );
     if (!contractDetails)
-      return Utils.returnRejection("No contract found", httpConstants.RESPONSE_CODES.BAD_REQUEST)
-    if(contractDetails.sourceCode && contractDetails.abi && contractDetails.compilerVersion)  {
-    const updateObject = {
-      sourceCode : contractDetails.sourceCode,
-      abi : contractDetails.abi,
-      compilerVersion : contractDetails.compilerVersion,
-      status :  contractDetails.status,
+      return Utils.returnRejection(
+        "No contract found",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
+    if (
+      contractDetails.sourceCode &&
+      contractDetails.abi &&
+      contractDetails.compilerVersion
+    ) {
+      const updateObject = {
+        sourceCode: contractDetails.sourceCode,
+        abi: contractDetails.abi,
+        compilerVersion: contractDetails.compilerVersion,
+        status: contractDetails.status,
+      };
+      await ContractModel.updateManyAccounts(
+        { address: contractAddress },
+        updateObject
+      );
     }
-    await ContractModel.updateManyAccounts({address : contractAddress} , updateObject);
-  }
-    return await ContractModel.getAccount({address: contractAddress , userId : userId});
-    
+    return await ContractModel.getAccount({
+      address: contractAddress,
+      userId: userId,
+    });
   };
 
-  getContractByAddress= async ({ address }) => {
+  getContractByAddress = async ({ address }) => {
     const response = await ContractModel.getAccount({ address: address });
     if (response.address) return response;
     return Utils.returnRejection(
@@ -256,13 +297,45 @@ export default class Manger {
     return { contractList, totalCount };
   };
 
-  getSCMContracts = async ({contracts}) => {
-    let SCMContracts = await ContractModel.getContracts({address: {$in: contracts}}, "address ")
-    SCMContracts = SCMContracts.map(contracts => contracts.address)
+  getImportedContractList = async (requestData) => {
+    if (!requestData.userId || requestData.userId === "")
+      return Utils.returnRejection(
+        apiFailureMessage.USER_ID_MISSING,
+        httpConstants.RESPONSE_CODES.NOT_FOUND
+      );
+
+    let existingContracts = await ContractModel.findData({userId: requestData.userId});
+    let owner = "xdc" + requestData.userId.slice(2);
+    let requestDataObserver = {
+      owner: owner,
+    };
+    const contractList = await XdcService.getContracts(
+      requestDataObserver
+    );
+    if (!contractList)
+      return Utils.returnRejection(
+        "No contract found",
+        httpConstants.RESPONSE_CODES.BAD_REQUEST
+      );
+    let importedContracts = Object.values(contractList);
+    existingContracts = existingContracts.map(({address}) => address);
+    const finalOutput = importedContracts.filter((data)=> !existingContracts.includes(data.address))
+    return finalOutput;
+  };
+
+  getSCMContracts = async ({ contracts }) => {
+    let SCMContracts = await ContractModel.getContracts(
+      { address: { $in: contracts } },
+      "address "
+    );
+    SCMContracts = SCMContracts.map((contracts) => contracts.address);
     return SCMContracts;
   };
-  getAlertContracts = async ({contracts}) => {
-    return await ContractModel.getContracts({address: {$in: contracts} , isDeleted: false},{address:1,tags:1});
+  getAlertContracts = async ({ contracts }) => {
+    return await ContractModel.getContracts(
+      { address: { $in: contracts }, isDeleted: false },
+      { address: 1, tags: 1 }
+    );
   };
   parseGetContractListRequest = (requestObj) => {
     if (!requestObj) return {};

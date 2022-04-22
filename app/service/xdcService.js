@@ -12,4 +12,11 @@ export default class XdcService {
             network: "XDC Mainnet"
         };
     }
+
+    static async getContracts(requestData) {
+        const contractResponse = await HTTPService.executeHTTPRequest(httpConstants.METHOD_TYPE.POST, Config.OBSERVER_CONTRACTS, `get-contracts`, requestData,{})
+        return !contractResponse || !contractResponse.success || !contractResponse.responseData || !Object.keys(contractResponse.responseData).length ? null : {
+            ...contractResponse.responseData
+        };
+    }
 }
