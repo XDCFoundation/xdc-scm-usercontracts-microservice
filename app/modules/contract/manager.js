@@ -34,7 +34,7 @@ export default class Manger {
     contractObject["addedOn"] = Date.now();
     contractArray.push(contractObject);
     new QueueController().insertInQueue(
-      { contractAddress, userId },
+      { contractAddress: contractAddress[index], userId },
       "CONTRACT_ADDED"
     );
     }
