@@ -29,6 +29,7 @@ module.exports = (app) => {
     app.post("/import-contracts", new ContractModule().getImportedContractList);
     app.post("/contract-list",authenticate, new ContractModule().getContractsList);
     app.post("/contract/:address", authenticate ,new ContractModule().getContractByAddress);
+    app.post("/scm-contract-detail", new ContractModule().getSCMContractDetails);
     app.post("/hide-contract",authenticate, ValidationManger.checkForId, new ContractModule().hideContract);
     app.post("/show-contract",authenticate,ValidationManger.checkForId,  new ContractModule().showContract);
     app.put("/contract-name",authenticate,ValidationManger.renameContract , new ContractModule().renameContract);

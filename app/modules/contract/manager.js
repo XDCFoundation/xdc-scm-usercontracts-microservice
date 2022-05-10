@@ -67,6 +67,15 @@ export default class Manger {
      return await ContractModel.updateManyAccounts({address : contractAddress} , updateObject); 
   };
 
+  getSCMContractDetails = async (requestData) => {
+    const response = await ContractModel.getAccount({ address: requestData.address });
+    if (response.address) return response;
+    return Utils.returnRejection(
+      apiFailureMessage.INVALID_ADDRESS,
+      httpConstants.RESPONSE_CODES.NOT_FOUND
+    );
+  }
+
   addTagToContract = async ({ contractId, tags , userId }) => {
     let findTag = await ContractModel.findOne({userId : userId , "tags.name" : { $in : tags}} , {tags:1});
     findTag=JSON.stringify(findTag)
