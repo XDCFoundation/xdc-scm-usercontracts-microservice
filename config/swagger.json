@@ -186,6 +186,37 @@
                 }
             }
         },
+
+        "/import-contracts": {
+            "post": {
+                "description": "Import contract list",
+                "summary": "Get list of contracts using user id",
+                "tags": [
+                    "Contracts"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/UserId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+
+
         "/hide-contract": {
             "post": {
                 "description": "Hide Contract",
