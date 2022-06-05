@@ -39,7 +39,7 @@ export default class Utils {
     err = err || {}
     const msg = err.message ? err.message : apiFailureMessage.INTERNAL_SERVER_ERROR
     const code = err.code ? err.code : httpConstants.RESPONSE_CODES.SERVER_ERROR
-    this.response(res, {}, msg, httpConstants.RESPONSE_STATUS.FAILURE, code)
+    this.response(res, err, msg, httpConstants.RESPONSE_STATUS.FAILURE, code)
   }
 
   /**

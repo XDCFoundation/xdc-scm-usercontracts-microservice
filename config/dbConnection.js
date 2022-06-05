@@ -18,6 +18,7 @@ export default class DBConnection {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
+            retryWrites:false
         };
         await mongoose.connect(Config.DB, options);
         return true;
