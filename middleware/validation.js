@@ -2,6 +2,13 @@ import Utils from '../app/utils'
 import * as yup from 'yup'
 
 module.exports = {
+  addContract: async (req, res, next) => {
+    const schema = yup.object().shape({
+      userId: yup.string().required(),
+      contractAddress: yup.string().required()
+    })
+    await validate(schema, req.body, res, next)
+  },
   renameContract: async (req, res, next) => {
     const schema = yup.object().shape({
       id: yup.string().required(),
@@ -14,6 +21,12 @@ module.exports = {
       id: yup.string().required(),
     })
     await validate(schema, req.body, res, next)
+  },
+  checkForIdQuery: async (req, res, next) => {
+    const schema = yup.object().shape({
+      id: yup.string().required(),
+    })
+    await validate(schema, req.query, res, next)
   },
   addTagToContract: async (req, res, next) => {
     const schema = yup.object().shape({
